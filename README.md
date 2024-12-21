@@ -23,6 +23,7 @@
 
 Очень тяжело, когда так много сообщений в логах, но их можно почистить. Давайте очистим логи старше, чем 2-дневной давности:
 `sudo journalctl --vacuum-time=2d`
+
 *Это полезно ещё и тем, что освобождает место на диске: у меня вычистилось 390 МБ логов, в которые я вряд ли когда-то посмотрю.*
 
 #### 4. Настройка `rsyslog` для отправки логов в файл
@@ -35,6 +36,7 @@
     action(type="omfile" file="/var/log/custom_info.log")
 }
 `
+
 И перезапустим сервис:
 `sudo systemctl restart rsyslog`
 
@@ -74,13 +76,10 @@ error_log syslog:server=unix:/dev/log;`, и перезапускаем nginx.
 ```
 #!/bin/bash
 
-# Файл логов nginx
 LOG_FILE="/var/log/nginx.log"
 
-# Файл для ошибок
 ERROR_FILE="/var/log/nginx/error.log"
 
-# Поиск ошибок за последние 7 дней
 grep -i "error" "$LOG_FILE" | awk -v date="$(date -d '7 days ago' '+%Y-%m-%d')" '$0 ~ date || $0 > date' > "$ERROR_FILE"
 
 echo "Ошибки за последние 7 дней сохранены в $ERROR_FILE"
@@ -90,7 +89,7 @@ echo "Ошибки за последние 7 дней сохранены в $ERR
 
 ### Проверка
 1. Заходим в `/etc/nginx/conf.d/test.conf` и пишем в него несуществующий IP сервера, до которого мы не сможем достучаться:
-`
+```
 http {
     server {
         listen 80;
@@ -100,7 +99,7 @@ http {
         }
     }
 }
-`
+```
 2. Перезагружаем nginx: `sudo systemctl reload nginx`.
 3. Пробуем достучаться до нашего несуществующего адреса: `curl http://localhost/test-error` - получаем ошибку 404. Ошибку 502 у меня смоделировать не получилось, поэтому она не появится в `errors.log`, а вот в `access.log` оно появляется, как и должно быть:
 ![image](https://github.com/mxrget/linux-university-additional-task/blob/main/access_logs.png)
