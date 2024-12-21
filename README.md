@@ -102,5 +102,5 @@ http {
 ```
 2. Перезагружаем nginx: `sudo systemctl reload nginx`.
 3. Пробуем достучаться до нашего несуществующего адреса: `curl http://localhost/test-error` - получаем ошибку 404. Ошибку 502 у меня смоделировать не получилось, поэтому она не появится в `errors.log`, а вот в `access.log` оно появляется, как и должно быть:
-![image](https://github.com/mxrget/linux-university-additional-task/blob/main/access_logs.png)
+![image](https://github.com/mxrget/linux-university-additional-task/blob/master/access_logs.png)
 4. Готово!
